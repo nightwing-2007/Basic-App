@@ -1,0 +1,65 @@
+.head_CU{
+    text-align: center;
+    text-decoration: underline;
+    margin-top: 1%;
+}
+
+.table{
+    text-align: left;
+}
+
+.form{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.details{
+    display: flex;
+    flex-direction: column;
+}
+
+.my_del{
+    display: flex;
+    align-items: center;
+    
+}
+
+.division{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 80px;
+    margin-bottom: 2%;
+}
+
+.inp{
+    font-size: 20px;
+}
+
+.each_inp_c{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.reach{
+    margin-top: 0px;
+}
+
+.details_side{
+    background: rgb(222, 222, 222);
+    padding: 6%;
+    border-radius: 5px;
+}
+
+.btn_sub_1{
+    border: none;
+    border-radius: 5px;
+    padding: 15px;
+    background: rgb(8, 191, 8);
+    width: 100%;
+    font-size: 20px;
+    color: white;
+    cursor: pointer;
+}

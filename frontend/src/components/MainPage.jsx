@@ -52,15 +52,6 @@ export const MainPage = () => {
               <strong>Description:</strong> {p.desc}
             </p>
 
-            {/*
-            <button
-              className={`btn ${hoverBtn === index ? "btnHover" : ""}`}
-              onMouseEnter={() => setHoverBtn(index)}
-              onMouseLeave={() => setHoverBtn(null)}
-            >
-              Add to Cart
-            </button>
-            */}
           </div>
         ))}
       </div>

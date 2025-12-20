@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router";
 
 import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function OtpSystem() {
   const navigate = useNavigate();
@@ -26,6 +27,7 @@ export default function OtpSystem() {
       justifyContent: "center",
       background: "#f4f6f9",
       fontFamily: "Arial, sans-serif",
+      flexGrow: "1"
     },
     card: {
       width: "380px",
@@ -42,7 +44,7 @@ export default function OtpSystem() {
       color: "#222",
     },
     input: {
-      width: "100%",
+      width: "93%",
       padding: "12px",
       margin: "10px 0",
       borderRadius: "8px",
@@ -80,7 +82,7 @@ export default function OtpSystem() {
   // ---------------------------------------
 
   const sendOtp = async () => {
-    const res = await fetch("http://localhost:5000/user/send-otp", {
+    const res = await fetch("https://cd2lkmcw-5000.inc1.devtunnels.ms/user/send-otp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
@@ -95,7 +97,7 @@ export default function OtpSystem() {
   };
 
   const verifyOtp = async () => {
-    const res = await fetch("http://localhost:5000/user/verify-otp", {
+    const res = await fetch("https://cd2lkmcw-5000.inc1.devtunnels.ms/user/verify-otp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, otp }),
@@ -129,7 +131,7 @@ export default function OtpSystem() {
 
     if (Object.keys(newErrors).length === 0) {
       try {
-        const res = await fetch("http://localhost:5000/changepass", {
+        const res = await fetch("https://cd2lkmcw-5000.inc1.devtunnels.ms/changepass", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData),
@@ -142,7 +144,7 @@ export default function OtpSystem() {
           localStorage.setItem("user", JSON.stringify(result.user));
 
           setTimeout(() => {
-            navigate(`/user/${data.user.email}/dashboard`);
+            navigate(`/user/dashboard`);
           }, 1500);
         }
       } catch (err) {
@@ -152,7 +154,7 @@ export default function OtpSystem() {
   };
 
   const skip = () => {
-    navigate(`/user/${formData.email}/dashboard`);
+    navigate(`/user/dashboard`);
   };
 
   return (

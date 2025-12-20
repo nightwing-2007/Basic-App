@@ -1,7 +1,6 @@
-import React from "react";
 import { NavLink } from "react-router";
 
-export default function Navbar({ user, onCartClick }) {
+export default function UserNavbar({ user, onCartClick }) {
   const styles = {
     navbar: {
       display: "flex",
@@ -62,11 +61,11 @@ export default function Navbar({ user, onCartClick }) {
 
       {/* Right - Profile + Cart */}
       <div style={styles.rightSection}>
-        <NavLink to={`/user/${data.email}/profile`}>
+        <NavLink to={`/user/profile`}>
         <img src="https://images.pexels.com/photos/56866/garden-rose-red-pink-56866.jpeg" alt="Profile" style={styles.profilePic} />
         </NavLink>
 
-        <NavLink to={`/user/${data.email}/cart`}>
+        <NavLink to={`/user/cart`}>
         <button
           style={styles.cartBtn}
           onMouseOver={(e) => (e.target.style.backgroundColor = "#415a77")}

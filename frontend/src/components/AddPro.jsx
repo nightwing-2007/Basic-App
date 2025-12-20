@@ -32,7 +32,7 @@ export const AddPro = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:5000/admin/add-new-products", {
+      const res = await fetch("https://cd2lkmcw-5000.inc1.devtunnels.ms/admin/add-new-products", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

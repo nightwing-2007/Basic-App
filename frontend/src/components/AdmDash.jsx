@@ -5,7 +5,7 @@ export const AdmDash = () => {
   const [Items, setItems] = useState([]);
 
   const loadItems = async () => {
-    const res = await fetch("http://localhost:5000/admin/add-new-products");
+    const res = await fetch("https://cd2lkmcw-5000.inc1.devtunnels.ms/admin/add-new-products");
     const data = await res.json();
     setItems(data);
   };
@@ -110,7 +110,7 @@ export const AdmDash = () => {
             />
           </NavLink>
 
-          <NavLink to='/admin/login'>
+          <NavLink to='/'>
             <input 
               type="button" 
               value="Logout"

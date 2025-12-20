@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
 export const NewEmp = () => {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ export const NewEmp = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:5000/admin/add-new-employee", {
+      const res = await fetch("https://cd2lkmcw-5000.inc1.devtunnels.ms/admin/add-new-employee", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

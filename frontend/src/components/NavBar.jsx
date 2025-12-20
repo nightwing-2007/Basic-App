@@ -1,4 +1,3 @@
-import React from "react";
 import { NavLink } from "react-router";
 
 // import './NV.css'
@@ -7,7 +6,7 @@ export default function Navbar() {
   return (
     <div
       style={{
-        width: "97.2%",
+        width: "97.39%",
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",

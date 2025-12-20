@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function EditPage() {
   const navigate = useNavigate();
@@ -38,7 +39,7 @@ export default function EditPage() {
 
     if (Object.keys(newErrors).length === 0) {
       try {
-        const res = await fetch("http://localhost:5000/edit", {
+        const res = await fetch("https://cd2lkmcw-5000.inc1.devtunnels.ms/edit", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData),
@@ -52,7 +53,7 @@ export default function EditPage() {
           localStorage.setItem("user", JSON.stringify(result.user));
 
           setTimeout(() => {
-            navigate(`/user/${data.user.email}/dashboard`);
+            navigate(`/user/dashboard`);
           }, 1500);
 
         } else {
@@ -127,7 +128,7 @@ export default function EditPage() {
         <h2 style={styles.title}>Edit Your Details</h2>
 
         <form onSubmit={handleSubmit}>
-          <h4>User: {formData.email}</h4>
+          <h4 style={{textAlign: "center", marginBottom: "15px"}}>User: {formData.email}</h4>
 
           {/* First Name */}
           <label style={styles.label}>First Name:</label>

@@ -13,6 +13,7 @@ export const Profile = () => {
       background: "#ffffff",
       boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
       fontFamily: "Arial, sans-serif",
+      
     },
     heading: {
       textAlign: "center",
@@ -67,7 +68,7 @@ export const Profile = () => {
     logoutButtonStyle: {
       padding: "10px 20px",
       marginRight: "15px",
-      backgroundColor: "#007bff",
+      // backgroundColor: "#007bff",
       border: "none",
       color: "white",
       fontSize: "16px",
@@ -85,6 +86,7 @@ export const Profile = () => {
 
   return (
     <>
+    <div style={{flexGrow: "1"}}>
       <div style={styles.container}>
         <h2 style={styles.heading}>My Profile</h2>
 
@@ -97,6 +99,11 @@ export const Profile = () => {
         </div>
 
         <div>
+          <div style={styles.infoBox}>
+            <label style={styles.label}>Customer ID:</label>
+            <p style={styles.value}>{data._id}</p>
+          </div>
+
           <div style={styles.infoBox}>
             <label style={styles.label}>Name:</label>
             <p style={styles.value}>{data.fname} {data.lname}</p>
@@ -119,7 +126,7 @@ export const Profile = () => {
         </div>
 
         <div style={styles.btnContainer}>
-          <NavLink to={`/user/${data.email}/profile/edit`}>
+          <NavLink to={`/user/profile/edit`}>
             <input
               type="button"
               value="Edit"
@@ -135,6 +142,7 @@ export const Profile = () => {
           </NavLink>
         </div>
       </div>
+    </div>
     </>
   );
 };

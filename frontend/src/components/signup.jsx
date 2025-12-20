@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router";
+import { useState } from "react";
+import { useNavigate, NavLink } from "react-router";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -41,7 +41,7 @@ export default function Signup() {
 
     if (Object.keys(newErrors).length === 0) {
       try {
-        const res = await fetch("http://localhost:5000/user/signup", {
+        const res = await fetch("https://cd2lkmcw-5000.inc1.devtunnels.ms/user/signup", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData),
@@ -52,7 +52,9 @@ export default function Signup() {
       } catch (err) {
         toast("Signup failed. Please try again.");
       }
-      navigate("/user/login");
+      setTimeout(() => {
+        navigate("/user/login");
+      }, 1500);
     }
   };
 
@@ -61,9 +63,10 @@ export default function Signup() {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    minHeight: "100vh",
+    minHeight: "fit-content",
     backgroundColor: "#f5f5f5",
     fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+    flexGrow: "1"
   };
 
   const formStyle = {
@@ -213,6 +216,19 @@ export default function Signup() {
         <button type="submit" style={buttonStyle}>
           Submit
         </button>
+        <p
+                style={{
+                  fontSize: "14px",
+                  textAlign: "center",
+                  
+                  
+                  marginTop: "15px",
+                }}
+              >
+                Already have an account ? <NavLink style={{cursor: "pointer", color: "#007bff"}} to="/user/login">
+                Login
+                </NavLink>
+              </p>
       </form>
       <ToastContainer />
     </div>

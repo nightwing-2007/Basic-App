@@ -6,7 +6,7 @@ export const Employee = () => {
   const [Empl, setEmpl] = useState([]);
 
   const loadEmpl = async () => {
-      const res = await fetch("http://localhost:5000/admin/add-new-employee");
+      const res = await fetch("https://cd2lkmcw-5000.inc1.devtunnels.ms/admin/add-new-employee");
       const data = await res.json();
       setEmpl(data);
   };

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router";
 import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ export default function Login() {
 
     if (Object.keys(newErrors).length === 0) {
       try {
-        const res = await fetch("http://localhost:5000/user/login", {
+        const res = await fetch("https://cd2lkmcw-5000.inc1.devtunnels.ms/user/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData),
@@ -45,7 +46,7 @@ export default function Login() {
           localStorage.setItem("user", JSON.stringify(data.user));
 
           setTimeout(() => {
-            navigate(`/user/${data.user.email}/dashboard`);
+            navigate(`/user/dashboard`);
           }, 1500);
         }
 
@@ -58,6 +59,7 @@ export default function Login() {
     <>
       <div
         style={{
+          flexGrow: "1",
           height: "75.5vh",
           width: "100%",
           display: "flex",
@@ -98,7 +100,7 @@ export default function Login() {
                 onChange={handleChange}
                 placeholder="Enter your email"
                 style={{
-                  width: "100%",
+                  width: "93%",
                   padding: "12px",
                   marginTop: "6px",
                   borderRadius: "8px",
@@ -123,7 +125,7 @@ export default function Login() {
                 onChange={handleChange}
                 placeholder="Enter your password"
                 style={{
-                  width: "100%",
+                  width: "93%",
                   padding: "12px",
                   marginTop: "6px",
                   borderRadius: "8px",
@@ -171,6 +173,21 @@ export default function Login() {
             >
               Submit
             </button>
+            
+              <p
+                style={{
+                  fontSize: "14px",
+                  textAlign: "center",
+                  
+                  
+                  marginTop: "15px",
+                }}
+              >
+                Don't have an account ? <NavLink style={{cursor: "pointer", color: "#007bff"}} to="/user/signup">
+                Signup
+                </NavLink>
+              </p>
+            
           </form>
 
           <ToastContainer />

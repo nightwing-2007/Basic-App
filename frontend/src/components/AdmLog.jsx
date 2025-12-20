@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
 export default function AdmLog() {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ export default function AdmLog() {
 
     if (Object.keys(newErrors).length === 0) {
       try {
-        const res = await fetch("http://localhost:5000/admin/login", {
+        const res = await fetch("https://cd2lkmcw-5000.inc1.devtunnels.ms/admin/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData),
@@ -59,12 +60,13 @@ export default function AdmLog() {
       <div
         style={{
           width: "97.3%",
-          minHeight: "92.4vh",
+          minHeight: "fit-content",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
           background: "#f2f4f7",
           padding: "20px",
+          flexGrow: "1"
         }}
       >
         <div

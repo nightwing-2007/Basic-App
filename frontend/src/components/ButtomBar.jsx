@@ -1,59 +1,26 @@
+import React from "react";
+import "./ButtomBar.css";
+
 export default function Footer() {
   return (
-    <div
-      style={{
-        width: "95.9%",
-        backgroundColor: "#111",
-        color: "white",
-        padding: "20px 30px",
-        textAlign: "center",
-        // marginTop: "40px"
-      }}
-    >
+    <div className="footer">
       {/* Website Name */}
-      <h3
-        style={{
-          margin: 0,
-          fontSize: "18px",
-          fontWeight: "600"
-        }}
-      >
-        Shopping Cart
-      </h3>
+      <h3 className="footer-title">Shopping Cart</h3>
 
       {/* Social Media Links */}
-      <p
-        style={{
-          marginTop: "10px",
-          marginBottom: "10px",
-          fontSize: "15px"
-        }}
-      >
+      <p className="footer-social">
         Follow us:
-        <a href="#" style={linkStyle}> Facebook </a>|
-        <a href="#" style={linkStyle}> Instagram </a>|
-        <a href="https://x.com/" style={linkStyle}> Twitter </a>|
-        <a href="https://www.linkedin.com/" style={linkStyle}> LinkedIn </a>|
-        <a href="https://www.youtube.com/" style={linkStyle}> YouTube </a>
+        <a href="#" className="footer-link">Facebook</a> |
+        <a href="#" className="footer-link">Instagram</a> |
+        <a href="https://x.com/" className="footer-link">Twitter</a> |
+        <a href="https://www.linkedin.com/" className="footer-link">LinkedIn</a> |
+        <a href="https://www.youtube.com/" className="footer-link">YouTube</a>
       </p>
 
       {/* Copyright */}
-      <p
-        style={{
-          margin: 0,
-          fontSize: "13px",
-          opacity: 0.7
-        }}
-      >
+      <p className="footer-copy">
         © {new Date().getFullYear()} Soumyadip Mandal — All Rights Reserved.
       </p>
     </div>
   );
 }
-
-const linkStyle = {
-  color: "#4fa3ff",
-  textDecoration: "none",
-  margin: "0 6px",
-  fontWeight: "500"
-};

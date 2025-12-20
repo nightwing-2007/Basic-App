@@ -1,5 +1,7 @@
 //import './App.css'
 import { createBrowserRouter, RouterProvider } from 'react-router'
+import './App.css'
+
 
 import { MainPage } from './components/MainPage'
 import Signup from './components/signup'
@@ -14,13 +16,14 @@ import { Cart } from './components/Cart'
 import { Employee } from './components/Employee'
 import { NewEmp } from './components/NewEmp'
 import OtpSystem from './components/ForgetPass'
-
 import Checkout from './components/Checkout'
 import Footer from './components/ButtomBar'
 import Navbar from './components/NavBar'
 import { AdminOrders } from './components/Orders'
 import { ContactUs } from './components/ContactUs'
 import UserNavBar from './components/UserNavBar'
+import BigNavbar from './components/UNBar'
+import MyOrders from './components/MyOrders'
 
 
 function App() {
@@ -54,38 +57,46 @@ function App() {
       <Footer></Footer>
       </>
     },{
-      path:"/user/:email/dashboard",
+      path:"/user/dashboard",
       element:<>
       <UserNavBar></UserNavBar>
+      <BigNavbar></BigNavbar>
       <Dashboard></Dashboard>
       <Footer></Footer>
       </>
     },{
-      path:"/user/:email/checkout",
+      path:"/user/checkout",
       element:<>
       <UserNavBar></UserNavBar>
       <Checkout></Checkout>
       <Footer></Footer>
       </>
     },{
-      path:'/user/:email/profile',
+      path:'/user/profile',
       element:<>
       <UserNavBar></UserNavBar>
       <Profile></Profile>
       <Footer></Footer>
       </>
     },{
-      path:'/user/:email/profile/edit',
+      path:'/user/profile/edit',
       element:<>
       <UserNavBar></UserNavBar>
       <EditPage></EditPage>
       <Footer></Footer>
       </>
     },{
-      path:'/user/:email/cart',
+      path:'/user/cart',
       element:<>
       <UserNavBar></UserNavBar>
       <Cart></Cart>
+      <Footer></Footer>
+      </>
+    },{
+      path:'/user/my-orders',
+      element:<>
+      <UserNavBar></UserNavBar>
+      <MyOrders></MyOrders>
       <Footer></Footer>
       </>
     },{
@@ -130,9 +141,12 @@ function App() {
 
   return (
     <>
-    <RouterProvider router={route}/>
+    <div className='app_div_main'>
+      <RouterProvider router={route}/>
+    </div>
     </>
   )
+  
 }
 
 export default App

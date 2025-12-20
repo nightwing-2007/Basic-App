@@ -1,83 +1,133 @@
-import React, { useState, useEffect } from 'react';
-import { NavLink } from 'react-router';
-
-import { ToastContainer, toast } from 'react-toastify';
+import React, { useState, useEffect } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const Dashboard = () => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  const cartKey = `cart_${user.email}`;
 
-  const data1 = localStorage.getItem('user');
-  const data = JSON.parse(data1);
+  const [items, setItems] = useState([]);
+  const [quantities, setQuantities] = useState({});
 
-  const [Items, setItems] = useState([]);
-
+  // Load products
   const loadItems = async () => {
-    const res = await fetch("http://localhost:5000/admin/add-new-products");
+    const res = await fetch(
+      "https://cd2lkmcw-5000.inc1.devtunnels.ms/admin/add-new-products"
+    );
     const data = await res.json();
     setItems(data);
   };
 
-  useEffect(() => {
-    loadItems();
-  }, []);
-
-  const logout = () => {
-    localStorage.removeItem("user");
+  // Load cart quantities
+  const loadCart = () => {
+    const cart = JSON.parse(localStorage.getItem(cartKey)) || [];
+    const qtyMap = {};
+    cart.forEach((item) => {
+      qtyMap[item._id] = item.qty;
+    });
+    setQuantities(qtyMap);
   };
 
-  // Add To Cart
-  const addToCart = (product) => {
-    const cartKey = `cart_${data.email}`;
-    let cart = JSON.parse(localStorage.getItem(cartKey)) || [];
-    cart.push(product);
-    localStorage.setItem(cartKey, JSON.stringify(cart));
+  useEffect(() => {
+    loadItems();
+    loadCart();
+  }, []);
 
-    toast("Product added to cart!");
+  // Update Cart with STOCK CHECK
+  const updateCart = (product, change) => {
+    const stock = product.stock ?? product.quantity ?? Infinity;
+
+    let cart = JSON.parse(localStorage.getItem(cartKey)) || [];
+    const index = cart.findIndex((i) => i._id === product._id);
+
+    // INCREASE
+    if (change === 1) {
+      const currentQty = quantities[product._id] || 0;
+
+      if (currentQty >= stock) {
+        toast.error("Stock limit reached");
+        return;
+      }
+    }
+
+    if (index !== -1) {
+      cart[index].qty += change;
+
+      if (cart[index].qty <= 0) {
+        cart.splice(index, 1);
+      }
+    } else {
+      cart.push({ ...product, qty: 1 });
+      toast.success("Product added to cart");
+    }
+
+    localStorage.setItem(cartKey, JSON.stringify(cart));
+    loadCart();
   };
 
   return (
     <>
-      
-
-      {/* Products Section */}
-      <div style={{ padding: "20px" }}>
-        <h1 style={{ textAlign: "center", marginBottom: "20px", color: "#222" }}>
-          Most Trending Products
-        </h1>
+      <div style={{ padding: "20px", flexGrow: "1" }}>
+        <h1 style={heading}>Most Trending Products</h1>
 
         <div style={gridStyle}>
+          {items.map((p) => {
+            const stock = p.stock ?? p.quantity ?? Infinity;
+            const currentQty = quantities[p._id] || 0;
 
-          {Items.map(p => (
-            <div key={p._id} style={cardStyle}>
+            return (
+              <div key={p._id} style={cardStyle}>
+                <h3>{p.category}</h3>
 
-              <h2 style={{ color: "#444" }}>{p.category}</h2>
+                <img src={p.image} alt={p.name} style={imageStyle} />
 
-              <img 
-                src={p.image} 
-                width="200" 
-                alt={p.name}
-                style={{
-                  borderRadius: "10px",
-                  width: "100%",
-                  height: "180px",
-                  objectFit: "cover",
-                  marginBottom: "10px"
-                }}
-              />
+                <p><b>{p.name}</b></p>
+                <p>₹{p.price}</p>
 
-              <p><strong>Name:</strong> {p.name}</p>
-              <p><strong>Price:</strong> ₹{p.price}</p>
-              <p style={{ marginBottom: "14px" }}><strong>Description:</strong> {p.desc}</p>
+                <p style={{ fontSize: "14px" }}>{p.desc}</p>
 
-              <button 
-                onClick={() => addToCart(p)} 
-                style={addToCartBtn}
-              >
-                Add to Cart
-              </button>
+                {/* STOCK INFO */}
+                <p style={{ fontSize: "13px", color: "#666", textAlign: "left" }}>
+                  Stock Available: {stock}
+                </p>
 
-            </div>
-          ))}
+                {currentQty ? (
+                  <div style={qtyContainer}>
+                    <button
+                      style={qtyBtn}
+                      onClick={() => updateCart(p, -1)}
+                    >
+                      −
+                    </button>
 
+                    <span style={qtyText}>{currentQty}</span>
+
+                    <button
+                      style={{
+                        ...qtyBtn,
+                        backgroundColor:
+                          currentQty >= stock ? "#aaa" : "#007bff",
+                        cursor:
+                          currentQty >= stock ? "not-allowed" : "pointer",
+                      }}
+                      disabled={currentQty >= stock}
+                      onClick={() => updateCart(p, 1)}
+                    >
+                      +
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    style={addBtn}
+                    disabled={stock === 0}
+                    onClick={() => updateCart(p, 1)}
+                  >
+                    {stock === 0 ? "Out of Stock" : "Add to Cart"}
+                  </button>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -86,50 +136,65 @@ export const Dashboard = () => {
   );
 };
 
+/* ---------------- STYLES ---------------- */
 
-
-// ----------------------
-// Inline Styles
-// ----------------------
-const buttonStyle = {
-  padding: "10px 20px",
-  marginRight: "15px",
-  backgroundColor: "#007bff",
-  border: "none",
-  color: "white",
-  fontSize: "16px",
-  borderRadius: "6px",
-  cursor: "pointer",
-};
-
-const logoutButtonStyle = {
-  ...buttonStyle,
-  backgroundColor: "#dc3545"
+const heading = {
+  textAlign: "center",
+  marginBottom: "25px",
 };
 
 const gridStyle = {
   display: "grid",
   gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
   gap: "20px",
-  padding: "10px",
 };
 
 const cardStyle = {
-  background: "white",
+  background: "#fff",
   padding: "15px",
   borderRadius: "12px",
-  boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
   textAlign: "center",
-  transition: "0.3s",
+  boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
 };
 
-const addToCartBtn = {
-  padding: "10px 18px",
+const imageStyle = {
+  width: "100%",
+  height: "180px",
+  objectFit: "cover",
+  borderRadius: "8px",
+};
+
+const addBtn = {
+  marginTop: "10px",
+  padding: "10px",
+  width: "100%",
   backgroundColor: "#28a745",
   border: "none",
   color: "white",
   borderRadius: "6px",
   cursor: "pointer",
-  fontSize: "15px",
-  marginTop: "10px"
+};
+
+const qtyContainer = {
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  gap: "12px",
+  marginTop: "10px",
+};
+
+const qtyBtn = {
+  width: "36px",
+  height: "36px",
+  borderRadius: "50%",
+  border: "none",
+  backgroundColor: "#007bff",
+  color: "white",
+  fontSize: "20px",
+  cursor: "pointer",
+};
+
+const qtyText = {
+  fontSize: "18px",
+  fontWeight: "bold",
 };

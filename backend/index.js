@@ -239,6 +239,33 @@ app.post("/order/place-order", async (req, res) => {
 
 
 
+// GET all orders of a specific user (using email)
+app.get("/user/my-orders", async (req, res) => {
+  try {
+    const email = req.query.email;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    const orders = await Order.find({ email }).sort({ date: -1 });
+
+    // if (!orders || orders.length === 0) {
+    //   return res.status(404).json({ message: "No orders found" });
+    // }
+
+    res.status(200).json({ message: "Orders fetched", orders: orders });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+
+
+
+
+
 
 
 // Get all orders (Admin)
@@ -286,7 +313,9 @@ app.post("/admin/login", async (req, res) => {
   
     if (!admin) {
       
-      return res.status(401).json({ message: "Invalid user id or password" });
+      return res.status(401).json({ 
+        message: `Access denied.
+        Invalid user id or password.` });
       // res.json({ message: "Login unsuccessful", user });
     }
     else {
@@ -571,4 +600,4 @@ app.put("/changepass", async (req, res) => {
 
 
 
-app.listen(process.env.PORT || 5000, () => console.log("Server running on port 5000"));
+app.listen(5000, () => console.log("Server running on port 5000"));

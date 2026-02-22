@@ -130,7 +130,7 @@ export default function BigNavbar() {
         </div>
       </div>
 
-      {/* -------- CATEGORY BAR (Like Amazon/Flipkart) -------- */}
+      {/* -------- CATEGORY BAR -------- */}
       <div style={styles.categoriesBar}>
         <div style={styles.categoryItem}>Mobiles</div>
         <div style={styles.categoryItem}>Fashion</div>

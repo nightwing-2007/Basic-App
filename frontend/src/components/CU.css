@@ -1,3 +1,7 @@
+.body{
+    flex-grow: 1;
+}
+
 .head_CU{
     text-align: center;
     text-decoration: underline;

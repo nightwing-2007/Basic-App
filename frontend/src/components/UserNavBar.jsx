@@ -54,7 +54,7 @@ export default function UserNavbar({ user, onCartClick }) {
   return (
     <div style={styles.navbar}>
       {/* Left - Company Name */}
-      <div style={styles.company}>Shopping Cart</div>
+      <div style={styles.company}>Rosary</div>
 
       {/* Middle - Welcome message */}
       <div style={styles.welcome}>Welcome {data.fname} {data.lname}</div>

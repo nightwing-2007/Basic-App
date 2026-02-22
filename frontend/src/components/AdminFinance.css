@@ -1,0 +1,131 @@
+.finance-container {
+  padding: 30px;
+  background: #f4f6f8;
+  min-height: 100vh;
+}
+
+.finance-title {
+  font-size: 26px;
+  margin-bottom: 25px;
+  color: #222;
+}
+
+/* GRID */
+.finance-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+/* CARDS */
+.finance-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.finance-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+.finance-card h4 {
+  font-size: 13px;
+  color: #777;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.finance-card h2 {
+  font-size: 28px;
+  margin: 0;
+  color: #111;
+}
+
+/* PROFIT & LOSS */
+.finance-card.profit h2 {
+  color: #0a8f08;
+}
+
+.finance-card.loss h2 {
+  color: #d11a2a;
+}
+
+/* TABLE */
+.table-wrapper {
+  margin-top: 40px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.finance-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.finance-table th {
+  background: #111;
+  color: #fff;
+  padding: 12px;
+  text-align: left;
+}
+
+.finance-table td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.finance-table tr:hover {
+  background: #f9f9f9;
+}
+
+/* STATUS BADGES */
+.status {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status.order-confirmed {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.status.packed {
+  background: #fff8e1;
+  color: #f57f17;
+}
+
+.status.shipped {
+  background: #ede7f6;
+  color: #5e35b1;
+}
+
+.status.delivered {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status.cancelled {
+  background: #fdecea;
+  color: #c62828;
+}
+
+.empty-row {
+  text-align: center;
+  padding: 20px;
+  color: #777;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .finance-title {
+    font-size: 22px;
+  }
+}

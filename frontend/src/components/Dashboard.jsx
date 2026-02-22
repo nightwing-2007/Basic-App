@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export const Dashboard = () => {
+  const navigate = useNavigate();
+
   const user = JSON.parse(localStorage.getItem("user"));
   const cartKey = `cart_${user.email}`;
 
@@ -18,7 +21,7 @@ export const Dashboard = () => {
     setItems(data);
   };
 
-  // Load cart quantities
+  // Load cart
   const loadCart = () => {
     const cart = JSON.parse(localStorage.getItem(cartKey)) || [];
     const qtyMap = {};
@@ -33,17 +36,15 @@ export const Dashboard = () => {
     loadCart();
   }, []);
 
-  // Update Cart with STOCK CHECK
+  // Add / Remove from Cart
   const updateCart = (product, change) => {
-    const stock = product.stock ?? product.quantity ?? Infinity;
+    const stock = product.stock ?? Infinity;
 
     let cart = JSON.parse(localStorage.getItem(cartKey)) || [];
     const index = cart.findIndex((i) => i._id === product._id);
 
-    // INCREASE
     if (change === 1) {
       const currentQty = quantities[product._id] || 0;
-
       if (currentQty >= stock) {
         toast.error("Stock limit reached");
         return;
@@ -52,10 +53,7 @@ export const Dashboard = () => {
 
     if (index !== -1) {
       cart[index].qty += change;
-
-      if (cart[index].qty <= 0) {
-        cart.splice(index, 1);
-      }
+      if (cart[index].qty <= 0) cart.splice(index, 1);
     } else {
       cart.push({ ...product, qty: 1 });
       toast.success("Product added to cart");
@@ -65,51 +63,48 @@ export const Dashboard = () => {
     loadCart();
   };
 
+  // BUY NOW
+  const buyNow = (product) => {
+    const stock = product.stock ?? Infinity;
+
+    if (stock <= 0) {
+      toast.error("Out of stock");
+      return;
+    }
+
+    const buyNowCart = [{ ...product, qty: 1 }];
+    localStorage.setItem(cartKey, JSON.stringify(buyNowCart));
+
+    navigate("/user/checkout");
+  };
+
   return (
     <>
-      <div style={{ padding: "20px", flexGrow: "1" }}>
+      <div style={{ padding: "20px" }}>
         <h1 style={heading}>Most Trending Products</h1>
 
         <div style={gridStyle}>
           {items.map((p) => {
-            const stock = p.stock ?? p.quantity ?? Infinity;
+            const stock = p.stock ?? Infinity;
             const currentQty = quantities[p._id] || 0;
 
             return (
               <div key={p._id} style={cardStyle}>
-                <h3>{p.category}</h3>
-
                 <img src={p.image} alt={p.name} style={imageStyle} />
 
-                <p><b>{p.name}</b></p>
+                <h3>{p.name}</h3>
                 <p>₹{p.price}</p>
-
                 <p style={{ fontSize: "14px" }}>{p.desc}</p>
-
-                {/* STOCK INFO */}
-                <p style={{ fontSize: "13px", color: "#666", textAlign: "left" }}>
-                  Stock Available: {stock}
-                </p>
+                <p style={{ fontSize: "13px" }}>Stock: {stock}</p>
 
                 {currentQty ? (
                   <div style={qtyContainer}>
-                    <button
-                      style={qtyBtn}
-                      onClick={() => updateCart(p, -1)}
-                    >
+                    <button style={qtyBtn} onClick={() => updateCart(p, -1)}>
                       −
                     </button>
-
                     <span style={qtyText}>{currentQty}</span>
-
                     <button
-                      style={{
-                        ...qtyBtn,
-                        backgroundColor:
-                          currentQty >= stock ? "#aaa" : "#007bff",
-                        cursor:
-                          currentQty >= stock ? "not-allowed" : "pointer",
-                      }}
+                      style={qtyBtn}
                       disabled={currentQty >= stock}
                       onClick={() => updateCart(p, 1)}
                     >
@@ -117,13 +112,27 @@ export const Dashboard = () => {
                     </button>
                   </div>
                 ) : (
-                  <button
-                    style={addBtn}
-                    disabled={stock === 0}
-                    onClick={() => updateCart(p, 1)}
-                  >
-                    {stock === 0 ? "Out of Stock" : "Add to Cart"}
-                  </button>
+                  <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+                    <button
+                      style={{ ...addBtn, flex: 1 }}
+                      disabled={stock === 0}
+                      onClick={() => updateCart(p, 1)}
+                    >
+                      Add to Cart
+                    </button>
+
+                    <button
+                      style={{
+                        ...addBtn,
+                        flex: 1,
+                        backgroundColor: "#ff9800",
+                      }}
+                      disabled={stock === 0}
+                      onClick={() => buyNow(p)}
+                    >
+                      Buy Now
+                    </button>
+                  </div>
                 )}
               </div>
             );
@@ -136,7 +145,7 @@ export const Dashboard = () => {
   );
 };
 
-/* ---------------- STYLES ---------------- */
+/* ================= STYLES ================= */
 
 const heading = {
   textAlign: "center",
@@ -165,9 +174,7 @@ const imageStyle = {
 };
 
 const addBtn = {
-  marginTop: "10px",
   padding: "10px",
-  width: "100%",
   backgroundColor: "#28a745",
   border: "none",
   color: "white",

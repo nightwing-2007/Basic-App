@@ -18,7 +18,7 @@ export default function Navbar() {
     >
       {/* Company Name */}
       <div style={{ fontSize: "22px", fontWeight: "bold" }}>
-        Shopping Cart
+        Shopify
       </div>
 
       {/* Tabs */}

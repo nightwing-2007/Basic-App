@@ -19,12 +19,12 @@ import OtpSystem from './components/ForgetPass'
 import Checkout from './components/Checkout'
 import Footer from './components/ButtomBar'
 import Navbar from './components/NavBar'
-import { AdminOrders } from './components/Orders'
+import AdminOrders from './components/Orders'
 import { ContactUs } from './components/ContactUs'
 import UserNavBar from './components/UserNavBar'
 import BigNavbar from './components/UNBar'
 import MyOrders from './components/MyOrders'
-
+import AdminFinance from './components/Finance'
 
 function App() {
   const route=createBrowserRouter([
@@ -136,6 +136,11 @@ function App() {
       element:<>
       <AdminOrders></AdminOrders>
       </>
+    },{
+      path:'/admin/finance',
+      element:<>
+      <AdminFinance></AdminFinance>
+      </>
     }
   ])
 
@@ -146,7 +151,6 @@ function App() {
     </div>
     </>
   )
-  
 }
 
 export default App

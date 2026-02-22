@@ -12,13 +12,14 @@ export default function Login() {
   });
 
   const [errors, setErrors] = useState({});
+  const [isVerifying, setIsVerifying] = useState(false);
 
-  // Input change
+  // Handle input change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Submit
+  // Handle submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
@@ -34,24 +35,33 @@ export default function Login() {
 
     if (Object.keys(newErrors).length === 0) {
       try {
-        const res = await fetch("https://cd2lkmcw-5000.inc1.devtunnels.ms/user/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
-        });
+        setIsVerifying(true);
+
+        const res = await fetch(
+          "https://cd2lkmcw-5000.inc1.devtunnels.ms/user/login",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData),
+          }
+        );
 
         const data = await res.json();
 
-        if (data.status == 200) {
+        toast(data.message);
+
+        if (data.status === 200) {
           localStorage.setItem("user", JSON.stringify(data.user));
 
           setTimeout(() => {
-            navigate(`/user/dashboard`);
-          }, 1500);
+            navigate("/user/dashboard");
+          }, 750);
         }
-
-        toast(data.message);
-      } catch { }
+      } catch (error) {
+        toast("Something went wrong");
+      } finally {
+        setIsVerifying(false);
+      }
     }
   };
 
@@ -60,7 +70,7 @@ export default function Login() {
       <div
         style={{
           flexGrow: "1",
-          height: "75.5vh",
+          height: "70vh",
           width: "100%",
           display: "flex",
           alignItems: "center",
@@ -92,7 +102,9 @@ export default function Login() {
           <form onSubmit={handleSubmit}>
             {/* Email */}
             <div style={{ marginBottom: "18px" }}>
-              <label style={{ fontWeight: "600", color: "#444" }}>Email:</label>
+              <label style={{ fontWeight: "600", color: "#444" }}>
+                Email:
+              </label>
               <input
                 type="email"
                 name="email"
@@ -117,7 +129,9 @@ export default function Login() {
 
             {/* Password */}
             <div style={{ marginBottom: "18px" }}>
-              <label style={{ fontWeight: "600", color: "#444" }}>Password:</label>
+              <label style={{ fontWeight: "600", color: "#444" }}>
+                Password:
+              </label>
               <input
                 type="password"
                 name="password"
@@ -154,40 +168,52 @@ export default function Login() {
               </p>
             </NavLink>
 
+            {/* Submit Button */}
             <button
               type="submit"
+              disabled={isVerifying}
               style={{
                 width: "100%",
                 padding: "12px",
-                background: "#007bff",
+                background: isVerifying ? "#999" : "#007bff",
                 border: "none",
                 color: "white",
                 fontSize: "16px",
                 fontWeight: "600",
                 borderRadius: "8px",
-                cursor: "pointer",
+                cursor: isVerifying ? "not-allowed" : "pointer",
                 transition: "0.3s",
               }}
-              onMouseOver={(e) => (e.target.style.background = "#0056b3")}
-              onMouseOut={(e) => (e.target.style.background = "#007bff")}
             >
-              Submit
+              {isVerifying ? "Verifying..." : "Submit"}
             </button>
-            
+
+            {/* Verifying Text */}
+            {isVerifying && (
               <p
                 style={{
-                  fontSize: "14px",
                   textAlign: "center",
-                  
-                  
-                  marginTop: "15px",
+                  marginTop: "10px",
+                  color: "#555",
+                  fontSize: "14px",
                 }}
               >
-                Don't have an account ? <NavLink style={{cursor: "pointer", color: "#007bff"}} to="/user/signup">
-                Signup
-                </NavLink>
+                Verifying your credentials with our server...
               </p>
-            
+            )}
+
+            <p
+              style={{
+                fontSize: "14px",
+                textAlign: "center",
+                marginTop: "15px",
+              }}
+            >
+              Don't have an account?{" "}
+              <NavLink style={{ color: "#007bff" }} to="/user/signup">
+                Signup
+              </NavLink>
+            </p>
           </form>
 
           <ToastContainer />

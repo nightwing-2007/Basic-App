@@ -196,65 +196,136 @@ app.put("/edit", async (req, res) => {
 
 
 
-const orderSchema = new mongoose.Schema({
-  email: { type: String, required: true },
-  name: { type: String, required: true },
-  address: { type: String, required: true },
-  items: { type: Array, required: true },
-  total: { type: Number, required: true },
-  date: { type: Date, default: Date.now },
+
+const orderItemSchema = new mongoose.Schema({
+  productId: { type: mongoose.Schema.Types.ObjectId, ref: "Items" },
+  name: String,
+  price: Number,
+  qty: Number,
 });
+
+const orderSchema = new mongoose.Schema(
+  {
+    orderId: {
+      type: String,
+      unique: true,
+    },
+
+    email: {
+      type: String,
+      required: true,
+      index: true,
+    },
+
+    name: {
+      type: String,
+      required: true,
+    },
+
+    address: {
+      type: String,
+      required: true,
+    },
+
+    items: {
+      type: [orderItemSchema],
+      required: true,
+    },
+
+    total: {
+      type: Number,
+      required: true,
+    },
+
+    paymentMethod: {
+      type: String,
+      default: "Cash on Delivery",
+    },
+
+    paymentStatus: {
+      type: String,
+      enum: ["Pending", "Paid"],
+      default: "Pending",
+    },
+
+    status: {
+      type: String,
+      enum: ["Order Confirmed", "Packed", "Shipped", "Delivered", "Cancelled"],
+      default: "Order Confirmed",
+    },
+
+    estimatedDelivery: {
+      type: Date,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
 const Order = mongoose.model("Order", orderSchema);
 
 
+
+
+
+
 app.post("/order/place-order", async (req, res) => {
   try {
-    const { email, name, address, items, total, date } = req.body;
+    const { email, name, address, items, total, paymentMethod } = req.body;
 
-    // Basic validation
     if (!email || !name || !address || !items || !total) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
+    // Generate Order ID
+    const orderId = "ORD" + Date.now();
+
+    // Estimated delivery: 5 days from now
+    const estimatedDelivery = new Date();
+    estimatedDelivery.setDate(estimatedDelivery.getDate() + 5);
+
     const newOrder = new Order({
-      name,
+      orderId,
       email,
+      name,
       address,
       items,
       total,
-      date,
+      paymentMethod: paymentMethod || "Cash on Delivery",
+      estimatedDelivery,
     });
 
     await newOrder.save();
 
-    res.status(200).json({ message: "Order placed successfully", order: newOrder });
+    res.status(200).json({
+      message: "Order placed successfully",
+      order: newOrder,
+    });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "Server Error", error: err });
+    console.error(err);
+    res.status(500).json({ message: "Server Error" });
   }
 });
 
 
 
 
-
-// GET all orders of a specific user (using email)
 app.get("/user/my-orders", async (req, res) => {
   try {
-    const email = req.query.email;
+    const { email } = req.query;
 
     if (!email) {
       return res.status(400).json({ message: "Email is required" });
     }
 
-    const orders = await Order.find({ email }).sort({ date: -1 });
+    const orders = await Order.find({ email })
+      .sort({ createdAt: -1 });
 
-    // if (!orders || orders.length === 0) {
-    //   return res.status(404).json({ message: "No orders found" });
-    // }
-
-    res.status(200).json({ message: "Orders fetched", orders: orders });
+    res.status(200).json({
+      message: "Orders fetched successfully",
+      orders,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server Error" });
@@ -268,16 +339,52 @@ app.get("/user/my-orders", async (req, res) => {
 
 
 
+
 // Get all orders (Admin)
 app.get("/admin/orders", async (req, res) => {
   try {
-    const orders = await Order.find().sort({ date: -1 }); // latest first
-    res.status(200).json(orders);
-  } catch (err) {
-    console.error(err);
+    const orders = await Order.find()
+      .sort({ createdAt: -1 }); // ✅ latest first (professional)
+
+    res.status(200).json({
+      message: "All orders fetched successfully",
+      totalOrders: orders.length,
+      orders,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Server Error",
+    });
+  }
+});
+
+
+
+
+app.put("/admin/update-order-status/:orderId", async (req, res) => {
+  try {
+    const { status } = req.body;
+
+    const updatedOrder = await Order.findOneAndUpdate(
+      { orderId: req.params.orderId },
+      { status },
+      { new: true }
+    );
+
+    if (!updatedOrder) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    res.status(200).json({
+      message: "Order status updated",
+      order: updatedOrder,
+    });
+  } catch (error) {
     res.status(500).json({ message: "Server Error" });
   }
 });
+
 
 
 

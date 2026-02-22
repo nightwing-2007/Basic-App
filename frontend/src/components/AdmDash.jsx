@@ -14,10 +14,6 @@ export const AdmDash = () => {
     loadItems();
   }, []);
 
-  // const logout = () => {
-  //   localStorage.removeItem("user");
-  // };
-
   return (
     <>
       {/* TOP SECTION */}
@@ -109,6 +105,27 @@ export const AdmDash = () => {
               onMouseOut={e => e.target.style.background="#ffc107"}
             />
           </NavLink>
+
+          <NavLink to='/admin/finance'>
+            <input 
+              type="button" 
+              value="Finance" 
+              style={{
+                padding: "10px 20px",
+                background: "#6f42c1",
+                border: "none",
+                color: "#fff",
+                borderRadius: "6px",
+                cursor: "pointer",
+                fontWeight: "600",
+                fontFamily: "Poppins",
+                transition: "0.3s",
+              }}
+              onMouseOver={e => e.target.style.background="#59339d"}
+              onMouseOut={e => e.target.style.background="#6f42c1"}
+            />
+          </NavLink>
+
 
           <NavLink to='/'>
             <input 

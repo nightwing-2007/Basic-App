@@ -6,21 +6,16 @@ import "react-toastify/dist/ReactToastify.css";
 export default function Checkout() {
   const navigate = useNavigate();
 
-  // Fetch user
   const user = JSON.parse(localStorage.getItem("user"));
   const cartKey = `cart_${user.email}`;
   const cart = JSON.parse(localStorage.getItem(cartKey)) || [];
 
-  // Address
   const [address, setAddress] = useState("");
+  const [step, setStep] = useState(1);
+  const [orderInfo, setOrderInfo] = useState(null);
 
-  // Calculate total properly
-  const total = cart.reduce(
-    (sum, item) => sum + item.price * item.qty,
-    0
-  );
+  const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
 
-  // Place Order
   const placeOrder = async () => {
     if (!address.trim()) {
       toast.error("Please enter delivery address");
@@ -39,6 +34,8 @@ export default function Checkout() {
       items: cart,
       total,
       date: new Date().toISOString(),
+      status: "Order Confirmed",
+      paymentMethod: "Cash on Delivery",
     };
 
     try {
@@ -54,14 +51,12 @@ export default function Checkout() {
       const data = await res.json();
 
       if (res.status === 200) {
-        toast.success(data.message || "Order placed successfully");
-
-        // Clear cart
         localStorage.removeItem(cartKey);
-
-        setTimeout(() => {
-          navigate("/user/cart");
-        }, 3000);
+        setOrderInfo({
+          ...orderData,
+          orderId: data.orderId || "ORD" + Date.now(),
+        });
+        setStep(2);
       } else {
         toast.error(data.message || "Order failed");
       }
@@ -71,131 +66,158 @@ export default function Checkout() {
     }
   };
 
+  /* ================= STEP 2 UI ================= */
+
+  if (step === 2 && orderInfo) {
+    return (
+      <>
+        <div style={styles.container}>
+          <h1 style={styles.success}>✅ Order Placed Successfully</h1>
+
+          <p><b>Order ID:</b> {orderInfo.orderId}</p>
+          <p><b>Status:</b> <span style={{ color: "green" }}>{orderInfo.status}</span></p>
+          <p><b>Payment Method:</b> {orderInfo.paymentMethod}</p>
+
+          <hr />
+
+          <h3>Delivery Address</h3>
+          <p>{orderInfo.address}</p>
+
+          <hr />
+
+          <h3>Ordered Items</h3>
+          {orderInfo.items.map((item, i) => (
+            <div key={i} style={styles.item}>
+              <p><b>{item.name}</b></p>
+              <p>₹{item.price} × {item.qty}</p>
+            </div>
+          ))}
+
+          <h2 style={styles.total}>Total Paid: ₹{orderInfo.total}</h2>
+
+          <p><b>Estimated Delivery:</b> 3–5 Business Days</p>
+
+          <div style={{ marginTop: "30px" }}>
+            <button
+              style={styles.btnPrimary}
+              onClick={() => navigate("/user/dashboard")}
+            >
+              Continue Shopping
+            </button>
+
+            <button
+              style={styles.btnSecondary}
+              onClick={() => navigate("/user/my-orders")}
+            >
+              View My Orders
+            </button>
+          </div>
+        </div>
+
+        <ToastContainer />
+      </>
+    );
+  }
+
+  /* ================= STEP 1 UI ================= */
+
   return (
     <>
-      <div
-        style={{
-          maxWidth: "800px",
-          margin: "40px auto",
-          padding: "25px",
-          borderRadius: "12px",
-          backgroundColor: "#ffffff",
-          boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
-          fontFamily: "Arial, sans-serif",
-        }}
-      >
-        <h1
-          style={{
-            textAlign: "center",
-            marginBottom: "25px",
-            fontSize: "28px",
-            color: "#222",
-          }}
-        >
-          Checkout
-        </h1>
+    <div className="mainn">
+      <div style={styles.container}>
+        <h1 style={styles.heading}>Checkout</h1>
 
-        {/* USER DETAILS */}
-        <div style={{ marginBottom: "30px" }}>
-          <h2 style={{ fontSize: "20px", color: "#444" }}>
-            Customer Details
-          </h2>
+        <h3>Customer Details</h3>
+        <p><b>Name:</b> {user.fname} {user.lname}</p>
+        <p><b>Email:</b> {user.email}</p>
 
-          <p><b>Name:</b> {user.fname} {user.lname}</p>
-          <p><b>Email:</b> {user.email}</p>
-        </div>
+        <h3>Delivery Address</h3>
+        <input
+          type="text"
+          placeholder="Enter full address"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          style={styles.input}
+        />
 
-        {/* ADDRESS */}
-        <div style={{ marginBottom: "30px" }}>
-          <h2 style={{ fontSize: "20px", color: "#444" }}>
-            Delivery Address
-          </h2>
+        <h3>Order Summary</h3>
+        {cart.map((item, i) => (
+          <div key={i} style={styles.item}>
+            <p>{item.name}</p>
+            <p>₹{item.price} × {item.qty}</p>
+          </div>
+        ))}
 
-          <input
-            type="text"
-            placeholder="Enter your full address here..."
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            style={{
-              width: "100%",
-              padding: "12px",
-              borderRadius: "8px",
-              border: "1px solid #ccc",
-              fontSize: "16px",
-              marginTop: "10px",
-            }}
-          />
-        </div>
+        <h2 style={styles.total}>Total: ₹{total}</h2>
 
-        {/* ITEMS */}
-        <div style={{ marginBottom: "30px" }}>
-          <h2 style={{ fontSize: "20px", color: "#444" }}>
-            Ordered Items
-          </h2>
-
-          {cart.length === 0 ? (
-            <p style={{ color: "#777" }}>No items found</p>
-          ) : (
-            cart.map((item, i) => (
-              <div
-                key={i}
-                style={{
-                  padding: "15px",
-                  marginBottom: "15px",
-                  borderRadius: "10px",
-                  background: "#f9f9f9",
-                  border: "1px solid #eee",
-                }}
-              >
-                <h3 style={{ margin: "0 0 5px 0" }}>
-                  {item.name}
-                </h3>
-
-                <p style={{ margin: "5px 0", color: "#666" }}>
-                  {item.desc}
-                </p>
-
-                <p style={{ fontWeight: "bold" }}>
-                  ₹{item.price} × {item.qty} = ₹
-                  {item.price * item.qty}
-                </p>
-              </div>
-            ))
-          )}
-        </div>
-
-        {/* TOTAL */}
-        <h2
-          style={{
-            fontSize: "22px",
-            textAlign: "right",
-            marginBottom: "30px",
-          }}
-        >
-          Total Amount:{" "}
-          <span style={{ color: "#e63946" }}>
-            ₹{total}
-          </span>
-        </h2>
-
-        <button
-          onClick={placeOrder}
-          style={{
-            width: "100%",
-            padding: "15px",
-            fontSize: "18px",
-            borderRadius: "10px",
-            backgroundColor: "#007bff",
-            color: "#fff",
-            border: "none",
-            cursor: "pointer",
-          }}
-        >
+        <button style={styles.btnPrimary} onClick={placeOrder}>
           Place Order
         </button>
       </div>
-
-      <ToastContainer />
+    </div>
+    <ToastContainer />
     </>
   );
 }
+
+/* ================= STYLES ================= */
+
+const styles = {
+  mainn: {
+    
+  },
+  container: {
+    maxWidth: "800px",
+    margin: "40px auto",
+    padding: "30px",
+    borderRadius: "12px",
+    background: "#fff",
+    boxShadow: "0 5px 15px rgba(0,0,0,0.1)",
+    fontFamily: "Arial",
+  },
+  heading: {
+    textAlign: "center",
+    marginBottom: "20px",
+  },
+  success: {
+    textAlign: "center",
+    color: "#2d6a4f",
+  },
+  input: {
+    width: "100%",
+    padding: "12px",
+    borderRadius: "8px",
+    border: "1px solid #ccc",
+    marginBottom: "20px",
+  },
+  item: {
+    padding: "10px",
+    borderBottom: "1px solid #eee",
+  },
+  total: {
+    textAlign: "right",
+    color: "#e63946",
+    marginTop: "20px",
+  },
+  btnPrimary: {
+    width: "100%",
+    padding: "14px",
+    background: "#007bff",
+    color: "#fff",
+    border: "none",
+    borderRadius: "8px",
+    fontSize: "16px",
+    cursor: "pointer",
+    marginBottom: "10px",
+  },
+  btnSecondary: {
+    width: "100%",
+    padding: "14px",
+    background: "#6c757d",
+    color: "#fff",
+    border: "none",
+    borderRadius: "8px",
+    fontSize: "16px",
+    cursor: "pointer",
+  },
+};

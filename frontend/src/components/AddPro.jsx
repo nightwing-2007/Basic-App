@@ -6,7 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 export const AddPro = () => {
   const navigate = useNavigate();
   const [errors, setErrors] = useState({});
-  const options = ["Phone", "TV", "Watch", "Shoe"];
+  const options = ["Phone", "TV", "Watch", "Shoe", "Stationary"];
 
   const [formData, setFormData] = useState({
     category: "",
